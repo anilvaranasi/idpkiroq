@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="6z7a8b9c0d1e2f3g4h5i6j7k8l9m0n1o" label="User Persona Override" max_length="0" name="u_user_persona_override" type="collection">
+        <element choice="3" display="true" label="User" mandatory="true" max_length="32" name="user" reference="sys_user" type="reference">
+            <choice/>
+        </element>
+        <element attributes="choice=1" choice="1" label="Active Roles" max_length="1000" name="active_roles" type="string">
+            <choice/>
+        </element>
+        <index name="index">
+            <element name="user"/>
+        </index>
+    </element>
+</database>

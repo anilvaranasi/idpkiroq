@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="d0030000000000000000000000000001" label="IDP Taxonomy" max_length="0" name="u_idp_taxonomy" type="collection">
+        <element choice="3" label="Icon" max_length="100" name="icon" type="string">
+            <choice/>
+        </element>
+        <element choice="1" default="true" label="Active" mandatory="true" max_length="40" name="active" type="boolean">
+            <choice/>
+        </element>
+        <element choice="3" display="true" label="Name" mandatory="true" max_length="100" name="name" type="string">
+            <choice/>
+        </element>
+        <element choice="3" label="Order" mandatory="true" max_length="40" name="order" type="integer">
+            <choice/>
+        </element>
+    </element>
+</database>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e2f" label="IDP Navigation Item" max_length="0" name="u_idp_navigation_item" type="collection">
+        <element choice="3" label="URL" mandatory="true" max_length="500" name="url" type="string">
+            <choice/>
+        </element>
+        <element choice="3" label="Icon" max_length="100" name="icon" type="string">
+            <choice/>
+        </element>
+        <element choice="3" dynamic_ref_qual="sys_idIN0a6613e4c37c0390f6ebf8dd" label="Taxonomy" max_length="32" name="taxonomy" reference="u_idp_taxonomy" type="reference">
+            <choice/>
+        </element>
+        <element attributes="choice=1" choice="1" label="Required Capabilities" max_length="1000" name="required_capabilities" type="string">
+            <choice/>
+        </element>
+        <element choice="3" label="Order" mandatory="true" max_length="40" name="order" type="integer">
+            <choice/>
+        </element>
+        <element choice="1" default="true" label="Active" mandatory="true" max_length="40" name="active" type="boolean">
+            <choice/>
+        </element>
+        <element choice="3" display="true" label="Name" mandatory="true" max_length="100" name="name" type="string">
+            <choice/>
+        </element>
+        <element choice="3" label="Label" mandatory="true" max_length="100" name="label" type="string">
+            <choice/>
+        </element>
+        <element choice="1" label="Quick Link" mandatory="true" max_length="40" name="quick_link" type="boolean">
+            <choice/>
+        </element>
+        <index name="index">
+            <element name="taxonomy"/>
+        </index>
+    </element>
+</database>

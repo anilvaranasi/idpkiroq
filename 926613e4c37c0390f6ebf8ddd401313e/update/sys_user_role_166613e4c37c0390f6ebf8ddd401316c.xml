@@ -2,7 +2,7 @@
     <sys_user_role action="INSERT_OR_UPDATE">
         <assignable_by/>
         <can_delegate>true</can_delegate>
-        <description>Default admin role</description>
+        <description/>
         <elevated_privilege>false</elevated_privilege>
         <federated_id>WfQS1ANaiapkWU5pkjYO1hrYgc0b3bGza+Vd2iKaRsY=</federated_id>
         <grantable>true</grantable>
@@ -12,7 +12,7 @@
         <suffix>admin</suffix>
         <sys_class_name>sys_user_role</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2026-05-09 00:53:08</sys_created_on>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
         <sys_id>166613e4c37c0390f6ebf8ddd401316c</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>x_146833_idpkiroq.admin</sys_name>
@@ -21,6 +21,6 @@
         <sys_scope display_value="idpkiroq">926613e4c37c0390f6ebf8ddd401313e</sys_scope>
         <sys_update_name>sys_user_role_166613e4c37c0390f6ebf8ddd401316c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2026-05-09 00:53:08</sys_updated_on>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
     </sys_user_role>
 </record_update>

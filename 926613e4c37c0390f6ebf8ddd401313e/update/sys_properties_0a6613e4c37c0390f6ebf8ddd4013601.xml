@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
     <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
         <description>AI API endpoint URL</description>
         <ignore_cache>false</ignore_cache>
-        <label>AI Endpoint</label>
-        <language/>
+        <is_private>false</is_private>
         <name>x_146833_idpkiroq.ai.endpoint</name>
         <read_roles/>
         <suffix>ai.endpoint</suffix>
@@ -12,11 +12,16 @@
         <sys_created_on>2026-05-09 09:00:00</sys_created_on>
         <sys_id>0a6613e4c37c0390f6ebf8ddd4013601</sys_id>
         <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_146833_idpkiroq.ai.endpoint</sys_name>
+        <sys_package display_value="idpkiroq" source="x_146833_idpkiroq">926613e4c37c0390f6ebf8ddd401313e</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="idpkiroq">926613e4c37c0390f6ebf8ddd401313e</sys_scope>
+        <sys_update_name>sys_properties_0a6613e4c37c0390f6ebf8ddd4013601</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
-        <system_value/>
         <type>string</type>
-        <update_roles/>
         <value/>
+        <write_roles/>
     </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=0a6613e4c37c0390f6ebf8ddd4013601"/>
 </record_update>
