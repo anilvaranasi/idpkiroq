@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <description>Enable AI features in IDP Kiro</description>
+        <ignore_cache>false</ignore_cache>
+        <label>AI Enabled</label>
+        <language/>
+        <name>x_146833_idpkiroq.ai.enabled</name>
+        <read_roles/>
+        <suffix>ai.enabled</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013600</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+        <system_value>false</system_value>
+        <type>boolean</type>
+        <update_roles/>
+        <value>false</value>
+    </sys_properties>
+</record_update>

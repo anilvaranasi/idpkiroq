@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_146833_idpkiroq.IDPCatalogEngine</api_name>
+        <caller_access>any</caller_access>
+        <client_callable>true</client_callable>
+        <description>Catalog engine for IDP portal</description>
+        <name>IDPCatalogEngine</name>
+        <script><![CDATA[var IDPCatalogEngine = Class.create();
+IDPCatalogEngine.prototype = {
+    CACHE_KEY: 'idp_catalog_',
+    CACHE_TTL: 300,
+
+    initialize: function() {
+    },
+
+    getUserCapabilities: function(userId) {
+        var capabilityIds = [];
+        var gr = new GlideRecord('sys_user_has_role');
+        gr.addQuery('user', userId || gs.getUserID());
+        gr.addQuery('role.name', 'LIKE', 'x_146833_idpkiroq.');
+        gr.query();
+        
+        var roleIds = [];
+        while (gr.next()) {
+            roleIds.push(gr.role.toString());
+        }
+        
+        if (roleIds.length === 0) {
+            return capabilityIds;
+        }
+        
+        var capGr = new GlideRecord('u_role_capability_map');
+        capGr.addQuery('role', 'IN', roleIds.join(','));
+        capGr.query();
+        
+        while (capGr.next()) {
+            capabilityIds.push(capGr.capability.toString());
+        }
+        
+        return capabilityIds;
+    },
+
+    getAvailableCatalogItems: function(userId) {
+        var capabilityIds = this.getUserCapabilities(userId);
+        var items = [];
+        
+        var gr = new GlideRecord('u_catalog_capability_map');
+        if (capabilityIds.length > 0) {
+            gr.addQuery('capability', 'IN', capabilityIds.join(','));
+        }
+        gr.query();
+        
+        var catalogItemIds = [];
+        while (gr.next()) {
+            catalogItemIds.push(gr.catalog_item.toString());
+        }
+        
+        if (catalogItemIds.length === 0) {
+            return items;
+        }
+        
+        var catGr = new GlideRecord('sc_cat_item');
+        catGr.addQuery('sys_id', 'IN', catalogItemIds.join(','));
+        catGr.addQuery('active', true);
+        catGr.query();
+        
+        while (catGr.next()) {
+            items.push({
+                sys_id: catGr.getUniqueValue(),
+                name: catGr.name,
+                description: catGr.short_description,
+                category: catGr.category ? catGr.category.name : null,
+                subcategory: catGr.subcategory ? catGr.subcategory.name : null
+            });
+        }
+        
+        return items;
+    },
+
+    filterCatalogForPortal: function(catalogItems, userId) {
+        var capabilityIds = this.getUserCapabilities(userId);
+        var filtered = [];
+        
+        for (var i = 0; i < catalogItems.length; i++) {
+            var item = catalogItems[i];
+            if (this.canUserExecute(item.sys_id, capabilityIds)) {
+                filtered.push(item);
+            }
+        }
+        
+        return filtered;
+    },
+
+    canUserExecute: function(catalogItemId, capabilityIds) {
+        var gr = new GlideRecord('u_catalog_capability_map');
+        gr.addQuery('catalog_item', catalogItemId);
+        gr.query();
+        
+        if (!gr.hasNext()) {
+            return true;
+        }
+        
+        while (gr.next()) {
+            if (capabilityIds.indexOf(gr.capability.toString()) === -1) {
+                return false;
+            }
+        }
+        
+        return true;
+    },
+
+    invalidateCache: function() {
+        var cache = new GlideCache(this.CACHE_KEY, this.CACHE_TTL);
+        cache.clear();
+    },
+
+    type: 'IDPCatalogEngine'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013202</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

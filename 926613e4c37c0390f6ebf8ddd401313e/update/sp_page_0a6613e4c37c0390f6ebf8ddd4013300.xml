@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_page">
+    <sp_page action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <content>&lt;div class="container-fluid"&gt;
+    &lt;div class="row"&gt;
+        &lt;div class="col-md-12"&gt;
+            &lt;div class="panel panel-default"&gt;
+                &lt;div class="panel-heading"&gt;
+                    &lt;h3 class="panel-title"&gt;IDP Home&lt;/h3&gt;
+                &lt;/div&gt;
+                &lt;div class="panel-body"&gt;
+                    &lt;div data-widget="idp_home_page"&gt;&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</content>
+        <css/>
+        <draft>false</draft>
+        <id>idp_kiro_home</id>
+        <internal>false</internal>
+        <public>true</public>
+        <roles/>
+        <sc_catalog/>
+        <sc_categories/>
+        <sc_category/>
+        <short_description>IDP Kiro Home Page</short_description>
+        <sys_class_name>sp_page</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013300</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+        <title>IDP Kiro Home</title>
+        <use_seamless_ui>true</use_seamless_ui>
+    </sp_page>
+</record_update>
