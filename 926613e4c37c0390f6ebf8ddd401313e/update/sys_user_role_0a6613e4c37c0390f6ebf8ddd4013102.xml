@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role">
+    <sys_user_role action="INSERT_OR_UPDATE">
+        <assignable_by/>
+        <can_delegate>true</can_delegate>
+        <description/>
+        <elevated_privilege>false</elevated_privilege>
+        <grantable>true</grantable>
+        <includes_roles/>
+        <name>x_146833_idpkiroq.sre</name>
+        <requires_subscription>true</requires_subscription>
+        <scoped_admin>false</scoped_admin>
+        <suffix>sre</suffix>
+        <sys_class_name>sys_user_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013102</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_user_role>
+</record_update>

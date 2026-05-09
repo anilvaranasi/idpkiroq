@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_146833_idpkiroq.IDPNavigationEngine</api_name>
+        <caller_access>any</caller_access>
+        <client_callable>true</client_callable>
+        <description>Navigation engine for IDP portal</description>
+        <name>IDPNavigationEngine</name>
+        <script><![CDATA[var IDPNavigationEngine = Class.create();
+IDPNavigationEngine.prototype = {
+    CACHE_KEY: 'idp_navigation_',
+    CACHE_TTL: 300,
+
+    initialize: function() {
+    },
+
+    getUserRoles: function(userId) {
+        var roles = [];
+        var gr = new GlideRecord('sys_user_has_role');
+        gr.addQuery('user', userId || gs.getUserID());
+        gr.query();
+        
+        while (gr.next()) {
+            roles.push(gr.role.name);
+        }
+        
+        return roles;
+    },
+
+    getCapabilities: function(roleIds) {
+        var capabilities = [];
+        var gr = new GlideRecord('u_role_capability_map');
+        gr.addQuery('role', 'IN', roleIds.join(','));
+        gr.query();
+        
+        while (gr.next()) {
+            capabilities.push(gr.capability.toString());
+        }
+        
+        return capabilities;
+    },
+
+    getTaxonomy: function() {
+        var taxonomies = [];
+        var gr = new GlideRecord('u_idp_taxonomy');
+        gr.addQuery('active', true);
+        gr.orderBy('order');
+        gr.query();
+        
+        while (gr.next()) {
+            taxonomies.push({
+                sys_id: gr.getUniqueValue(),
+                name: gr.name,
+                order: gr.order,
+                icon: gr.icon
+            });
+        }
+        
+        return taxonomies;
+    },
+
+    getNavigationItems: function(capabilityIds) {
+        var items = [];
+        var gr = new GlideRecord('u_idp_navigation_item');
+        gr.addQuery('active', true);
+        gr.orderBy('order');
+        gr.query();
+        
+        while (gr.next()) {
+            if (this.canAccessItem(gr, capabilityIds)) {
+                items.push({
+                    sys_id: gr.getUniqueValue(),
+                    name: gr.name,
+                    label: gr.label,
+                    url: gr.url,
+                    icon: gr.icon,
+                    taxonomy: gr.taxonomy ? gr.taxonomy.toString() : null,
+                    required_capabilities: gr.required_capabilities,
+                    order: gr.order,
+                    quick_link: gr.quick_link
+                });
+            }
+        }
+        
+        return items;
+    },
+
+    canAccessItem: function(gr, capabilityIds) {
+        if (!capabilityIds || capabilityIds.length === 0) {
+            return true;
+        }
+        
+        var requiredCaps = gr.required_capabilities;
+        if (!requiredCaps || requiredCaps === '') {
+            return true;
+        }
+        
+        var requiredList = requiredCaps.split(',');
+        for (var i = 0; i < requiredList.length; i++) {
+            if (capabilityIds.indexOf(requiredList[i].trim()) === -1) {
+                return false;
+            }
+        }
+        
+        return true;
+    },
+
+    buildNavigationTree: function() {
+        var cache = new GlideCache(this.CACHE_KEY, this.CACHE_TTL);
+        var cached = cache.get('navigation_tree');
+        
+        if (cached) {
+            return cached;
+        }
+        
+        var user = gs.getUser();
+        var roles = this.getUserRoles(user.getID());
+        var capabilities = this.getCapabilities(roles);
+        var taxonomies = this.getTaxonomy();
+        var items = this.getNavigationItems(capabilities);
+        
+        var tree = {
+            taxonomies: taxonomies,
+            items: items,
+            timestamp: new GlideDateTime().getDisplayValue()
+        };
+        
+        cache.put('navigation_tree', tree);
+        return tree;
+    },
+
+    getNavigation: function() {
+        return this.buildNavigationTree();
+    },
+
+    invalidateCache: function() {
+        var cache = new GlideCache(this.CACHE_KEY, this.CACHE_TTL);
+        cache.clear();
+    },
+
+    type: 'IDPNavigationEngine'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013201</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_12345.IDPAWSConnector</api_name>
+        <category>integration</category>
+        <client_callable>false</client_callable>
+        <description>Connector for AWS services integration</description>
+        <name>IDPAWSConnector</name>
+        <script><![CDATA[var IDPAWSConnector = Class.create();
+IDPAWSConnector.prototype = {
+    initialize: function() {
+        this.accessKey = gs.getProperty('x_12345.idp.aws.access_key');
+        this.secretKey = gs.getProperty('x_12345.idp.aws.secret_key');
+        this.region = gs.getProperty('x_12345.idp.aws.region');
+    },
+
+    fetchData: function(entityId) {
+        try {
+            var url = 'https://ec2.' + this.region + '.amazonaws.com/?Action=DescribeInstances&InstanceId.1=' + entityId;
+            
+            var request = new sn_ws.RESTMessageV2();
+            request.setEndpoint(url);
+            request.setHttpMethod('GET');
+            request.setRequestHeader('X-Amz-Date', new GlideDateTime().getDisplayValue());
+            request.setRequestHeader('Authorization', 'AWS4-HMAC-SHA256 Credential=' + this.accessKey);
+            
+            var response = request.execute();
+            var responseBody = response.getBody();
+            
+            if (response.getStatusCode() == 200) {
+                return this.parseAWSResponse(responseBody);
+            }
+            
+            return null;
+        } catch (ex) {
+            gs.error('IDPAWSConnector.fetchData failed: ' + ex.getMessage());
+            return null;
+        }
+    },
+
+    parseAWSResponse: function(xml) {
+        try {
+            var parser = new XMLParser();
+            var doc = parser.parse(xml);
+            return doc;
+        } catch (ex) {
+            gs.error('IDPAWSConnector.parseAWSResponse failed: ' + ex.getMessage());
+            return null;
+        }
+    },
+
+    getEC2Instances: function() {
+        try {
+            var url = 'https://ec2.' + this.region + '.amazonaws.com/?Action=DescribeInstances';
+            
+            var request = new sn_ws.RESTMessageV2();
+            request.setEndpoint(url);
+            request.setHttpMethod('GET');
+            request.setRequestHeader('X-Amz-Date', new GlideDateTime().getDisplayValue());
+            request.setRequestHeader('Authorization', 'AWS4-HMAC-SHA256 Credential=' + this.accessKey);
+            
+            var response = request.execute();
+            var responseBody = response.getBody();
+            
+            if (response.getStatusCode() == 200) {
+                return this.parseAWSResponse(responseBody);
+            }
+            
+            return [];
+        } catch (ex) {
+            gs.error('IDPAWSConnector.getEC2Instances failed: ' + ex.getMessage());
+            return [];
+        }
+    },
+
+    type: 'IDPAWSConnector'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013a53</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>IDPAWSConnector</sys_name>
+        <sys_package display_value="IDP Kiroq" source="x_12345">926613e4c37c0390f6ebf8ddd401313e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="IDP Kiroq">926613e4c37c0390f6ebf8ddd401313e</sys_scope>
+        <sys_update_name>sys_script_include_0a6613e4c37c0390f6ebf8ddd4013a53</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>
