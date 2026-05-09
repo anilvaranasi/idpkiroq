@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="u_capability_taxonomy_map">
+    <u_capability_taxonomy_map action="INSERT_OR_UPDATE">
+        <capability>0a6613e4c37c0390f6ebf8ddd4013716</capability>
+        <taxonomy>0a6613e4c37c0390f6ebf8ddd4013701</taxonomy>
+        <sys_class_name>u_capability_taxonomy_map</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013736</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </u_capability_taxonomy_map>
+</record_update>
