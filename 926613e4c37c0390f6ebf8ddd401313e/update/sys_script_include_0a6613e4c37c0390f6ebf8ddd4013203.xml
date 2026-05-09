@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_146833_idpkiroq.IDPAIOrchestrator</api_name>
+        <caller_access>any</caller_access>
+        <client_callable>true</client_callable>
+        <description>AI orchestrator for IDP portal</description>
+        <name>IDPAIOrchestrator</name>
+        <script><![CDATA[var IDPAIOrchestrator = Class.create();
+IDPAIOrchestrator.prototype = {
+    initialize: function() {
+        this.aiEnabled = gs.getProperty('x_146833_idpkiroq.ai.enabled') === 'true';
+        this.aiEndpoint = gs.getProperty('x_146833_idpkiroq.ai.endpoint');
+        this.aiApiKey = gs.getProperty('x_146833_idpkiroq.ai.api_key');
+    },
+
+    ask: function(question, context) {
+        if (!this.aiEnabled || !this.aiEndpoint) {
+            return {
+                error: 'AI is not enabled',
+                answer: 'Please contact your administrator to enable AI features.'
+            };
+        }
+        
+        var payload = {
+            question: question,
+            context: context || {},
+            timestamp: new GlideDateTime().getDisplayValue()
+        };
+        
+        try {
+            var response = this.callAIEndpoint('ask', payload);
+            return response;
+        } catch (e) {
+            return {
+                error: e.toString(),
+                answer: 'Sorry, I encountered an error processing your request.'
+            };
+        }
+    },
+
+    recommend: function(requirement, context) {
+        if (!this.aiEnabled || !this.aiEndpoint) {
+            return {
+                error: 'AI is not enabled',
+                recommendations: []
+            };
+        }
+        
+        var payload = {
+            requirement: requirement,
+            context: context || {},
+            timestamp: new GlideDateTime().getDisplayValue()
+        };
+        
+        try {
+            var response = this.callAIEndpoint('recommend', payload);
+            return response;
+        } catch (e) {
+            return {
+                error: e.toString(),
+                recommendations: []
+            };
+        }
+    },
+
+    summarize: function(text, max_length) {
+        if (!this.aiEnabled || !this.aiEndpoint) {
+            return {
+                error: 'AI is not enabled',
+                summary: text
+            };
+        }
+        
+        var payload = {
+            text: text,
+            max_length: max_length || 500,
+            timestamp: new GlideDateTime().getDisplayValue()
+        };
+        
+        try {
+            var response = this.callAIEndpoint('summarize', payload);
+            return response;
+        } catch (e) {
+            return {
+                error: e.toString(),
+                summary: text
+            };
+        }
+    },
+
+    onIncidentCreated: function(incidentSysId) {
+        if (!this.aiEnabled) {
+            return;
+        }
+        
+        var incident = new GlideRecord('incident');
+        if (!incident.get(incidentSysId)) {
+            return;
+        }
+        
+        var context = {
+            incident_number: incident.number,
+            short_description: incident.short_description,
+            description: incident.description,
+            caller_id: incident.caller_id ? incident.caller_id.name : null,
+            impact: incident.impact,
+            urgency: incident.urgency
+        };
+        
+        var summary = this.summarize(incident.description, 200);
+        
+        if (summary.summary) {
+            incident.work_notes = 'AI Summary: ' + summary.summary;
+            incident.update();
+        }
+    },
+
+    onDeploymentFailure: function(changeSysId) {
+        if (!this.aiEnabled) {
+            return;
+        }
+        
+        var change = new GlideRecord('change_request');
+        if (!change.get(changeSysId)) {
+            return;
+        }
+        
+        var context = {
+            change_number: change.number,
+            short_description: change.short_description,
+            description: change.description,
+            start_date: change.start_date,
+            end_date: change.end_date,
+            state: change.state
+        };
+        
+        var analysis = this.analyzeDeploymentFailure(change, context);
+        
+        if (analysis.root_cause) {
+            change.work_notes = 'AI Root Cause Analysis: ' + analysis.root_cause;
+            change.update();
+        }
+    },
+
+    analyzeDeploymentFailure: function(change, context) {
+        if (!this.aiEnabled || !this.aiEndpoint) {
+            return {
+                root_cause: 'AI analysis not available'
+            };
+        }
+        
+        var payload = {
+            type: 'deployment_failure',
+            change: context,
+            timestamp: new GlideDateTime().getDisplayValue()
+        };
+        
+        try {
+            var response = this.callAIEndpoint('analyze', payload);
+            return response;
+        } catch (e) {
+            return {
+                root_cause: 'AI analysis failed: ' + e.toString()
+            };
+        }
+    },
+
+    callAIEndpoint: function(endpoint, payload) {
+        var request = new sn_ws.RESTMessageV2();
+        request.setEndpoint(this.aiEndpoint + '/' + endpoint);
+        request.setHttpMethod('POST');
+        request.setRequestHeader('Content-Type', 'application/json');
+        request.setRequestHeader('Authorization', 'Bearer ' + this.aiApiKey);
+        request.setRequestBody(JSON.stringify(payload));
+        
+        var response = request.execute();
+        var responseBody = response.getBody();
+        
+        if (response.getStatusCode() >= 200 && response.getStatusCode() < 300) {
+            return JSON.parse(responseBody);
+        } else {
+            throw new Error('AI API error: ' + responseBody);
+        }
+    },
+
+    type: 'IDPAIOrchestrator'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013203</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

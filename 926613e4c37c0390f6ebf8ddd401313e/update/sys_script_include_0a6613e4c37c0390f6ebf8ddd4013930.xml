@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_146833_idpkiroq.BuildAgentSelector</api_name>
+        <caller_access>any</caller_access>
+        <client_callable>false</client_callable>
+        <description>Build agent selection engine</description>
+        <name>BuildAgentSelector</name>
+        <script><![CDATA[var BuildAgentSelector = Class.create();
+BuildAgentSelector.prototype = {
+    CACHE_KEY: 'idp_build_agents_',
+    CACHE_TTL: 300,
+
+    initialize: function() {
+    },
+
+    getActiveAgents: function() {
+        var cache = new GlideCache(this.CACHE_KEY, this.CACHE_TTL);
+        var cached = cache.get('active_agents');
+        
+        if (cached) {
+            return cached;
+        }
+        
+        var agents = [];
+        var gr = new GlideRecord('u_idp_build_agent');
+        gr.addQuery('active', true);
+        gr.orderBy('quality_score');
+        gr.query();
+        
+        while (gr.next()) {
+            agents.push({
+                sys_id: gr.getUniqueValue(),
+                agent_id: gr.agent_id,
+                name: gr.name,
+                provider: gr.provider,
+                model: gr.model,
+                context_window: gr.context_window,
+                quality_score: gr.quality_score,
+                speed_score: gr.speed_score,
+                input_cost_per_1k: parseFloat(gr.input_cost_per_1k),
+                output_cost_per_1k: parseFloat(gr.output_cost_per_1k),
+                specializations: gr.specializations ? gr.specializations.split(',') : []
+            });
+        }
+        
+        cache.put('active_agents', agents);
+        return agents;
+    },
+
+    selectAgent: function(requirement, options) {
+        var agents = this.getActiveAgents();
+        if (agents.length === 0) {
+            return { error: 'No active agents available' };
+        }
+        
+        var taskType = this.classifyTask(requirement);
+        var estimatedTokens = this.estimateTokens(requirement);
+        
+        var scoredAgents = agents.map(function(agent) {
+            return {
+                agent: agent,
+                score: this.scoreAgent(agent, {
+                    taskType: taskType,
+                    estimatedTokens: estimatedTokens,
+                    options: options || {}
+                })
+            };
+        }.bind(this));
+        
+        scoredAgents.sort(function(a, b) {
+            return b.score - a.score;
+        });
+        
+        var selected = scoredAgents[0];
+        
+        return {
+            selected_agent: selected.agent,
+            reasoning: this.generateReasoning(selected.agent, taskType),
+            all_scores: scoredAgents
+        };
+    },
+
+    classifyTask: function(requirement) {
+        var lowerReq = requirement.toLowerCase();
+        
+        if (lowerReq.includes('deploy') || lowerReq.includes('release') || lowerReq.includes('build')) {
+            return 'deployment';
+        } else if (lowerReq.includes('test') || lowerReq.includes('qa') || lowerReq.includes('verify')) {
+            return 'testing';
+        } else if (lowerReq.includes('security') || lowerReq.includes('scan') || lowerReq.includes('audit')) {
+            return 'security';
+        } else if (lowerReq.includes('document') || lowerReq.includes('write') || lowerReq.includes('report')) {
+            return 'documentation';
+        } else if (lowerReq.includes('code') || lowerReq.includes('function') || lowerReq.includes('class')) {
+            return 'coding';
+        } else {
+            return 'general';
+        }
+    },
+
+    estimateTokens: function(text) {
+        var words = text.trim().split(/\s+/).length;
+        return Math.ceil(words * 1.3);
+    },
+
+    scoreAgent: function(agent, params) {
+        var taskType = params.taskType;
+        var estimatedTokens = params.estimatedTokens;
+        var options = params.options || {};
+        
+        var weights = {
+            quality: options.quality_weight || 0.4,
+            cost: options.token_cost_weight || 0.3,
+            speed: options.speed_weight || 0.3
+        };
+        
+        var qualityScore = agent.quality_score / 100;
+        
+        var costScore = 1 - (agent.input_cost_per_1k + agent.output_cost_per_1k) / 0.1;
+        costScore = Math.max(0, Math.min(1, costScore));
+        
+        var speedScore = agent.speed_score / 100;
+        
+        var contextScore = agent.context_window >= estimatedTokens ? 1 : 0.5;
+        
+        var specializationScore = 1;
+        if (taskType === 'coding' && agent.specializations && agent.specializations.includes('coding')) {
+            specializationScore = 1.2;
+        } else if (taskType === 'deployment' && agent.specializations && agent.specializations.includes('deployment')) {
+            specializationScore = 1.2;
+        } else if (taskType === 'security' && agent.specializations && agent.specializations.includes('security')) {
+            specializationScore = 1.2;
+        }
+        
+        var baseScore = (qualityScore * weights.quality + costScore * weights.cost + speedScore * weights.speed);
+        
+        return baseScore * contextScore * specializationScore;
+    },
+
+    generateReasoning: function(selected, taskType) {
+        var reasoning = 'Selected ' + selected.name + ' (' + selected.model + ') based on:\n';
+        
+        reasoning += '- Quality Score: ' + selected.quality_score + '/100\n';
+        reasoning += '- Speed Score: ' + selected.speed_score + '/100\n';
+        reasoning += '- Context Window: ' + selected.context_window + ' tokens\n';
+        reasoning += '- Cost: $' + (selected.input_cost_per_1k + selected.output_cost_per_1k).toFixed(4) + '/1K tokens\n';
+        
+        if (selected.specializations && selected.specializations.length > 0) {
+            reasoning += '- Specializations: ' + selected.specializations.join(', ') + '\n';
+        }
+        
+        reasoning += '- Task Type: ' + taskType;
+        
+        return reasoning;
+    },
+
+    invalidateCache: function() {
+        var cache = new GlideCache(this.CACHE_KEY, this.CACHE_TTL);
+        cache.clear();
+    },
+
+    type: 'BuildAgentSelector'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013930</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_12345.idp_integration_engine</api_name>
+        <category>integration</category>
+        <client_callable>false</client_callable>
+        <description>Integration engine for managing external system connectors and synchronization</description>
+        <name>IDPIntegrationEngine</name>
+        <script><![CDATA[var IDPIntegrationEngine = Class.create();
+IDPIntegrationEngine.prototype = {
+    initialize: function() {
+    },
+
+    syncExternalEntity: function(entityId, connectorType) {
+        try {
+            var connector = this.getConnector(connectorType);
+            if (!connector) {
+                throw new Error('Connector not found: ' + connectorType);
+            }
+            
+            var data = connector.fetchData(entityId);
+            if (data) {
+                this.processSyncResult(data, connectorType, entityId);
+            }
+            
+            return { success: true, data: data };
+        } catch (ex) {
+            gs.error('IDPIntegrationEngine.syncExternalEntity failed: ' + ex.getMessage());
+            return { success: false, error: ex.getMessage() };
+        }
+    },
+
+    getConnector: function(connectorType) {
+        switch (connectorType) {
+            case 'kubernetes':
+                return new IDPKubernetesConnector();
+            case 'github':
+                return new IDPGitHubConnector();
+            case 'aws':
+                return new IDPAWSConnector();
+            default:
+                return null;
+        }
+    },
+
+    processSyncResult: function(data, connectorType, entityId) {
+        if (!data) return;
+        
+        var gr = new GlideRecord('u_idp_external_entity');
+        gr.addQuery('entity_id', entityId);
+        gr.addQuery('connector_ref.name', connectorType);
+        gr.query();
+        
+        if (gr.next()) {
+            gr.last_sync = new GlideDateTime();
+            gr.status = 'active';
+            gr.update();
+        }
+    },
+
+    handleWebhook: function(eventType, payload) {
+        try {
+            var gr = new GlideRecord('u_idp_webhook_event');
+            gr.initialize();
+            gr.event_type = eventType;
+            gr.payload = JSON.stringify(payload);
+            gr.processed = false;
+            gr.insert();
+            
+            return { success: true, webhookId: gr.sys_id };
+        } catch (ex) {
+            gs.error('IDPIntegrationEngine.handleWebhook failed: ' + ex.getMessage());
+            return { success: false, error: ex.getMessage() };
+        }
+    },
+
+    processWebhooks: function() {
+        var results = [];
+        var gr = new GlideRecord('u_idp_webhook_event');
+        gr.addQuery('processed', false);
+        gr.query();
+        
+        while (gr.next()) {
+            var result = this.processWebhookEvent(gr);
+            results.push(result);
+            
+            gr.processed = true;
+            gr.update();
+        }
+        
+        return results;
+    },
+
+    processWebhookEvent: function(webhookGr) {
+        try {
+            var eventType = webhookGr.event_type;
+            var payload = JSON.parse(webhookGr.payload);
+            
+            switch (eventType) {
+                case 'github.push':
+                    this.handleGitHubPush(payload);
+                    break;
+                case 'kubernetes.pod_status':
+                    this.handleKubernetesPodStatus(payload);
+                    break;
+                case 'aws.ec2_state':
+                    this.handleAWSEC2State(payload);
+                    break;
+                default:
+                    gs.info('Unknown webhook event type: ' + eventType);
+            }
+            
+            return { success: true, webhookId: webhookGr.sys_id };
+        } catch (ex) {
+            gs.error('IDPIntegrationEngine.processWebhookEvent failed: ' + ex.getMessage());
+            return { success: false, webhookId: webhookGr.sys_id, error: ex.getMessage() };
+        }
+    },
+
+    handleGitHubPush: function(payload) {
+        var repo = payload.repository.full_name;
+        var branch = payload.ref.replace('refs/heads/', '');
+        var commits = payload.commits;
+        
+        gs.info('GitHub push received for ' + repo + ' on branch ' + branch);
+        
+        var connectorGr = new GlideRecord('u_idp_integration_connector');
+        connectorGr.addQuery('connector_type', 'github');
+        connectorGr.query();
+        
+        while (connectorGr.next()) {
+            this.syncExternalEntity(repo, 'github');
+        }
+    },
+
+    handleKubernetesPodStatus: function(payload) {
+        var podName = payload.metadata.name;
+        var namespace = payload.metadata.namespace;
+        var status = payload.status.phase;
+        
+        gs.info('Kubernetes pod status update: ' + podName + ' in ' + namespace + ' is ' + status);
+    },
+
+    handleAWSEC2State: function(payload) {
+        var instanceId = payload['detail']['instance-id'];
+        var state = payload['detail']['state'];
+        
+        gs.info('AWS EC2 instance ' + instanceId + ' state changed to ' + state);
+    },
+
+    type: 'IDPIntegrationEngine'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013a50</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>IDPIntegrationEngine</sys_name>
+        <sys_package display_value="IDP Kiroq" source="x_12345">926613e4c37c0390f6ebf8ddd401313e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="IDP Kiroq">926613e4c37c0390f6ebf8ddd401313e</sys_scope>
+        <sys_update_name>sys_script_include_0a6613e4c37c0390f6ebf8ddd4013a50</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

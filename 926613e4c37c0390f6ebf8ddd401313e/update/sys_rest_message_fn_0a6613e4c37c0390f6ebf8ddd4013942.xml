@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_rest_message_fn">
+    <sys_rest_message_fn action="INSERT_OR_UPDATE">
+        <name>agent_compare</name>
+        <rest_message>0a6613e4c37c0390f6ebf8ddd4013400</rest_message>
+        <rest_resource>agent/compare</rest_resource>
+        <resource_location>api/x_146833_idpkiroq/agent/compare</resource_location>
+        <use_same_sys_id>true</use_same_sys_id>
+        <sys_class_name>sys_rest_message_fn</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013942</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+        <http_method>POST</http_method>
+        <script><![CDATA[(function executeRestMessage(input, response) {
+    var selector = new BuildAgentSelector();
+    var requirement = input.body.requirement || '';
+    var options = input.body.options || {};
+    
+    var agents = selector.getActiveAgents();
+    var taskType = selector.classifyTask(requirement);
+    var estimatedTokens = selector.estimateTokens(requirement);
+    
+    var scoredAgents = agents.map(function(agent) {
+        return {
+            agent: agent,
+            score: selector.scoreAgent(agent, {
+                taskType: taskType,
+                estimatedTokens: estimatedTokens,
+                options: options
+            })
+        };
+    });
+    
+    scoredAgents.sort(function(a, b) {
+        return b.score - a.score;
+    });
+    
+    response.setBody(JSON.stringify({ agents: scoredAgents }));
+    response.setStatus(200);
+})(input, response);]]></script>
+        <sysparm_template/>
+        <sysparm_template_headers/>
+        <sysparm_response_fields/>
+        <sysparm_response_type>json</sysparm_response_type>
+    </sys_rest_message_fn>
+</record_update>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_12345.IDPGitHubConnector</api_name>
+        <category>integration</category>
+        <client_callable>false</client_callable>
+        <description>Connector for GitHub repository integration</description>
+        <name>IDPGitHubConnector</name>
+        <script><![CDATA[var IDPGitHubConnector = Class.create();
+IDPGitHubConnector.prototype = {
+    initialize: function() {
+        this.baseUrl = gs.getProperty('x_12345.idp.github.api_url');
+        this.token = gs.getProperty('x_12345.idp.github.api_token');
+    },
+
+    fetchData: function(entityId) {
+        try {
+            var url = this.baseUrl + '/repos/' + entityId;
+            
+            var request = new sn_ws.RESTMessageV2();
+            request.setEndpoint(url);
+            request.setHttpMethod('GET');
+            request.setRequestHeader('Authorization', 'token ' + this.token);
+            request.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+            
+            var response = request.execute();
+            var responseBody = response.getBody();
+            
+            if (response.getStatusCode() == 200) {
+                return JSON.parse(responseBody);
+            }
+            
+            return null;
+        } catch (ex) {
+            gs.error('IDPGitHubConnector.fetchData failed: ' + ex.getMessage());
+            return null;
+        }
+    },
+
+    getRepositoryCommits: function(repo, branch) {
+        try {
+            var url = this.baseUrl + '/repos/' + repo + '/commits?sha=' + branch;
+            
+            var request = new sn_ws.RESTMessageV2();
+            request.setEndpoint(url);
+            request.setHttpMethod('GET');
+            request.setRequestHeader('Authorization', 'token ' + this.token);
+            request.setRequestHeader('Accept', 'application/vnd.github.v3+json');
+            
+            var response = request.execute();
+            var responseBody = response.getBody();
+            
+            if (response.getStatusCode() == 200) {
+                return JSON.parse(responseBody);
+            }
+            
+            return [];
+        } catch (ex) {
+            gs.error('IDPGitHubConnector.getRepositoryCommits failed: ' + ex.getMessage());
+            return [];
+        }
+    },
+
+    type: 'IDPGitHubConnector'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013a52</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>IDPGitHubConnector</sys_name>
+        <sys_package display_value="IDP Kiroq" source="x_12345">926613e4c37c0390f6ebf8ddd401313e</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="IDP Kiroq">926613e4c37c0390f6ebf8ddd401313e</sys_scope>
+        <sys_update_name>sys_script_include_0a6613e4c37c0390f6ebf8ddd4013a52</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>

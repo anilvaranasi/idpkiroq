@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="u_idp_build_agent">
+    <u_idp_build_agent action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <agent_id>gpt-3.5-turbo</agent_id>
+        <context_window>16000</context_window>
+        <input_cost_per_1k>0.0005</input_cost_per_1k>
+        <model>gpt-3.5-turbo-1106</model>
+        <name>GPT-3.5 Turbo</name>
+        <output_cost_per_1k>0.0015</output_cost_per_1k>
+        <provider>openai</provider>
+        <quality_score>70</quality_score>
+        <short_description/>
+        <speed_score>95</speed_score>
+        <specializations>coding,general</specializations>
+        <sys_class_name>u_idp_build_agent</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013957</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </u_idp_build_agent>
+</record_update>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_146833_idpkiroq.IDPSecurity</api_name>
+        <caller_access>any</caller_access>
+        <client_callable>false</client_callable>
+        <description>Security engine for capability checking</description>
+        <name>IDPSecurity</name>
+        <script><![CDATA[var IDPSecurity = Class.create();
+IDPSecurity.prototype = {
+    initialize: function() {
+    },
+
+    hasCapability: function(capabilityId) {
+        var userCapabilities = this.getUserCapabilityIds();
+        return userCapabilities.indexOf(capabilityId) !== -1;
+    },
+
+    hasCapabilityForUser: function(userId, capabilityId) {
+        var gr = new GlideRecord('sys_user_has_role');
+        gr.addQuery('user', userId);
+        gr.addQuery('role.name', 'LIKE', 'x_146833_idpkiroq.');
+        gr.query();
+        
+        var roleIds = [];
+        while (gr.next()) {
+            roleIds.push(gr.role.toString());
+        }
+        
+        if (roleIds.length === 0) {
+            return false;
+        }
+        
+        var capGr = new GlideRecord('u_role_capability_map');
+        capGr.addQuery('role', 'IN', roleIds.join(','));
+        capGr.addQuery('capability', capabilityId);
+        capGr.query();
+        
+        return capGr.hasNext();
+    },
+
+    getUserCapabilityIds: function() {
+        var user = gs.getUser();
+        var capabilityIds = [];
+        
+        var gr = new GlideRecord('sys_user_has_role');
+        gr.addQuery('user', user.getID());
+        gr.addQuery('role.name', 'LIKE', 'x_146833_idpkiroq.');
+        gr.query();
+        
+        var roleIds = [];
+        while (gr.next()) {
+            roleIds.push(gr.role.toString());
+        }
+        
+        if (roleIds.length === 0) {
+            return capabilityIds;
+        }
+        
+        var capGr = new GlideRecord('u_role_capability_map');
+        capGr.addQuery('role', 'IN', roleIds.join(','));
+        capGr.query();
+        
+        while (capGr.next()) {
+            capabilityIds.push(capGr.capability.toString());
+        }
+        
+        return capabilityIds;
+    },
+
+    type: 'IDPSecurity'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2026-05-09 09:00:00</sys_created_on>
+        <sys_id>0a6613e4c37c0390f6ebf8ddd4013200</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
+    </sys_script_include>
+</record_update>
