@@ -316,7 +316,7 @@ class IDPKiroqMCP {
   }
 
   private async makeRequest(endpoint: string, method: string = 'GET', data?: any) {
-    const url = `${this.config.instanceUrl}/api/x_12345/idp/${endpoint}`;
+    const url = `${this.config.instanceUrl}/api/x_146833_idpkiroq/${endpoint}`;
     
     const config = {
       method,
