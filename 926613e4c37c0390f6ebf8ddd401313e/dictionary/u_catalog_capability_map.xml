@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element attributes="enforce_dot_walk_cross_scope_access=true" db_object_id="d0060000000000000000000000000001" label="Catalog Capability Map" max_length="0" name="u_catalog_capability_map" type="collection">
+        <element choice="3" display="true" label="Catalog Item" mandatory="true" max_length="32" name="catalog_item" reference="sc_cat_item" type="reference">
+            <choice/>
+        </element>
+        <element choice="3" display="true" dynamic_ref_qual="sys_idIN0a6613e4c37c0390f6ebf8dd" label="Capability" mandatory="true" max_length="32" name="capability" reference="u_idp_capability" type="reference">
+            <choice/>
+        </element>
+        <index name="index">
+            <element name="capability"/>
+        </index>
+        <index name="index2">
+            <element name="catalog_item"/>
+        </index>
+    </element>
+</database>
