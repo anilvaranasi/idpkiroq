@@ -340,87 +340,87 @@ class IDPKiroqMCP {
   }
 
   private async handleGetCapabilities(args: any) {
-    return this.makeRequest('capabilities', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetTaxonomy(args: any) {
-    return this.makeRequest(`taxonomy/${args.name}`, 'GET');
+    return this.makeRequest('agent/list', 'GET');
   }
 
   private async handleCreateCapability(args: any) {
-    return this.makeRequest('capabilities', 'POST', args);
+    return this.makeRequest('agent/select', 'POST', args);
   }
 
   private async handleGetBuildAgents(args: any) {
-    return this.makeRequest('build_agents', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetNavigation(args: any) {
-    return this.makeRequest('navigation', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetRoles(args: any) {
-    return this.makeRequest('roles', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetCapabilitiesForRole(args: any) {
-    return this.makeRequest(`roles/${args.role_name}/capabilities`, 'GET');
+    return this.makeRequest('agent/list', 'GET');
   }
 
   private async handleSearchCapabilities(args: any) {
-    return this.makeRequest('capabilities/search', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetIntegrationConnectors(args: any) {
-    return this.makeRequest('connectors', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleSyncExternalEntity(args: any) {
-    return this.makeRequest('sync', 'POST', args);
+    return this.makeRequest('agent/select', 'POST', args);
   }
 
   private async handleGetScorecards(args: any) {
-    return this.makeRequest('scorecards', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetSelfServiceActions(args: any) {
-    return this.makeRequest('self_service_actions', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetApprovalWorkflows(args: any) {
-    return this.makeRequest('approval_workflows', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetTTLConfig(args: any) {
-    return this.makeRequest(`ttl_config/${args.resource_type}`, 'GET');
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleCreateApprovalRequest(args: any) {
-    return this.makeRequest('approval_requests', 'POST', args);
+    return this.makeRequest('agent/select', 'POST', args);
   }
 
   private async handleGetWebhookEvents(args: any) {
-    return this.makeRequest('webhook_events', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleProcessWebhooks(args: any) {
-    return this.makeRequest('webhook_events/process', 'POST');
+    return this.makeRequest('agent/select', 'POST');
   }
 
   private async handleGetExternalEntities(args: any) {
-    return this.makeRequest('external_entities', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleGetServiceCatalog(args: any) {
-    return this.makeRequest('service_catalog', 'GET', args);
+    return this.makeRequest('agent/list', 'GET', args);
   }
 
   private async handleCreateUserPersona(args: any) {
-    return this.makeRequest('user_personas', 'POST', args);
+    return this.makeRequest('agent/select', 'POST', args);
   }
 
   private async handleGetCapabilitiesByTaxonomy(args: any) {
-    return this.makeRequest(`taxonomy/${args.taxonomy_name}/capabilities`, 'GET');
+    return this.makeRequest('agent/list', 'GET');
   }
 
   async run() {
