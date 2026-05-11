@@ -2,7 +2,12 @@
     <sys_atf_test_step action="INSERT_OR_UPDATE">
         <description>Test Capability Taxonomy Map table data model</description>
         <order>40</order>
-        <snapshot/>
+        <step><![CDATA[(function step(assert, $library) {
+    // Test Capability Taxonomy Map table exists
+    var gr = new GlideRecord('u_capability_taxonomy_map');
+    gr.query();
+    assert.isTrue(gr.hasNext(), 'Capability Taxonomy Map table should have records');
+})(step, $library);]]></step>
         <sys_class_name>sys_atf_test_step</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2026-05-09 09:00:00</sys_created_on>
@@ -16,6 +21,6 @@
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2026-05-09 09:00:00</sys_updated_on>
         <test display_value="IDP Integration Framework Tests">0a6613e4c37c0390f6ebf8ddd4013d00</test>
-        <type>1</type>
+        <type>script</type>
     </sys_atf_test_step>
 </record_update>
